@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import FloatingNumber from '@/src/components/FloatingNumber';
-import CRTEffect from '@/src/components/CRTEffect';
+import Image from 'next/image';
+import FloatingNumber from './components/FloatingNumber';
+import CRTEffect from './components/CRTEffect';
 
 export default function Home() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -12,6 +13,8 @@ export default function Home() {
   const [newlyReplacedIndices, setNewlyReplacedIndices] = useState<number[]>([]);
   const [gridDimensions, setGridDimensions] = useState({ cols: 0, rows: 0, total: 0 });
   const [numberValues, setNumberValues] = useState<number[]>([]);
+  const [maxProgress, setMaxProgress] = useState(0);
+  const [totalNumbersSelected, setTotalNumbersSelected] = useState(0);
   const draggedOverRef = useRef<number[]>([]);
   const draggedIndicesRef = useRef<number[]>([]);
   
@@ -37,6 +40,13 @@ export default function Home() {
   useEffect(() => {
     console.log('Selected numbers:', selectedNumbers);
   }, [selectedNumbers]);
+  
+  useEffect(() => {
+    // Progress based on total numbers selected (assuming 50 numbers for 100%)
+    const newProgress = Math.min((totalNumbersSelected / 50) * 100, 100);
+    console.log('Total numbers selected:', totalNumbersSelected, 'New progress:', newProgress);
+    setMaxProgress(newProgress);
+  }, [totalNumbersSelected]);
   
   const getAdjacentIndices = (index: number) => {
     const row = Math.floor(index / gridDimensions.cols);
@@ -94,15 +104,27 @@ export default function Home() {
     if (isDragging && draggedOverRef.current.length > 0) {
       setIsDragging(false);
       
+      // Capture the count before clearing refs
+      const selectedCount = draggedOverRef.current.length;
+      const selectedNumbersCopy = [...draggedOverRef.current];
+      const replacedIndices = [...draggedIndicesRef.current];
+      
       // Call generateError with selected numbers
-      generateError([...draggedOverRef.current]);
+      generateError(selectedNumbersCopy);
       
       // Set selected numbers for display
-      setSelectedNumbers([...draggedOverRef.current]);
+      setSelectedNumbers(selectedNumbersCopy);
+      
+      // Add selected numbers count to total for progress bar
+      console.log('Adding to total:', selectedCount, 'numbers');
+      setTotalNumbersSelected(prev => {
+        const newTotal = prev + selectedCount;
+        console.log('Updating totalNumbersSelected from', prev, 'to', newTotal);
+        return newTotal;
+      });
       
       // Immediately generate new numbers for the dragged positions
       const newNumberValues = [...numberValues];
-      const replacedIndices = [...draggedIndicesRef.current];
       draggedIndicesRef.current.forEach(index => {
         newNumberValues[index] = Math.floor(Math.random() * 10);
       });
@@ -126,15 +148,27 @@ export default function Home() {
       if (isDragging && draggedOverRef.current.length > 0) {
         setIsDragging(false);
         
+        // Capture the count before clearing refs
+        const selectedCount = draggedOverRef.current.length;
+        const selectedNumbersCopy = [...draggedOverRef.current];
+        const replacedIndices = [...draggedIndicesRef.current];
+        
         // Call generateError with selected numbers
-        generateError([...draggedOverRef.current]);
+        generateError(selectedNumbersCopy);
         
         // Set selected numbers for display
-        setSelectedNumbers([...draggedOverRef.current]);
+        setSelectedNumbers(selectedNumbersCopy);
+        
+        // Add selected numbers count to total for progress bar
+        console.log('Global handler adding to total:', selectedCount, 'numbers');
+        setTotalNumbersSelected(prev => {
+          const newTotal = prev + selectedCount;
+          console.log('Global handler updating totalNumbersSelected from', prev, 'to', newTotal);
+          return newTotal;
+        });
         
         // Immediately generate new numbers for the dragged positions
         const newNumberValues = [...numberValues];
-        const replacedIndices = [...draggedIndicesRef.current];
         draggedIndicesRef.current.forEach(index => {
           newNumberValues[index] = Math.floor(Math.random() * 10);
         });
@@ -159,41 +193,44 @@ export default function Home() {
 
   return (
     <CRTEffect>
-      <main style={{ 
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        paddingTop: '20vh',
-        paddingBottom: '20vh',
-        gap: '2rem',
-        boxSizing: 'border-box'
-      }}>
-        <div 
-          onMouseLeave={() => {
-            setHoveredIndex(null);
-            if (!isDragging) {
-              draggedOverRef.current = [];
-              setSelectedNumbers([]);
-              setCurrentlyDraggedIndices([]);
-            }
-          }}
-          style={{ 
-          display: 'grid',
-          gridTemplateColumns: `repeat(${gridDimensions.cols}, 1fr)`,
-          gridTemplateRows: `repeat(${gridDimensions.rows}, 1fr)`,
-          gap: '2px',
-          width: '100vw',
-          height: '60vh',
-          userSelect: 'none',
-          WebkitUserSelect: 'none',
-          MozUserSelect: 'none',
-          msUserSelect: 'none',
-          padding: '10px',
-          boxSizing: 'border-box'
-        }}>
-          {Array.from({ length: gridDimensions.total }, (_, i) => {
+      <main className="flex flex-col items-center justify-start mt-8 min-h-screen gap-8 box-border">
+        
+        <div className="w-[95vw] flex flex-row justify-center items-center gap-4">
+          <div className="progress-bar border text-[#00b5cc] h-12 px-8 py-2 w-full font-bold text-2xl flex items-center justify-between relative overflow-hidden">
+            <div 
+              className="absolute top-0 right-0 h-full bg-[#00b5cc] transition-all duration-300 ease-out"
+              style={{ 
+                width: `${maxProgress}%`,
+                opacity: 0.2
+              }}
+            ></div>
+            <span className="relative z-10">Cold Harbor</span>
+            <span className="relative z-10">
+              {Math.round(maxProgress)}%
+            </span>
+          </div>
+          <Image src="lumon_logo.svg" alt="Lumon Logo from Severence" width={200} height={140} className="mx-6" />
+        </div>
+        
+        <div className="w-screen py-4 relative overflow-hidden">
+          <div className="absolute inset-x-0 top-0 h-px bg-[#00b5cc] z-20"></div>
+          <div className="absolute inset-x-0 bottom-0 h-px bg-[#00b5cc] z-20"></div>
+          <div 
+            className="select-none p-4 box-border h-full overflow-hidden gap-[2px] w-full"
+            onMouseLeave={() => {
+              setHoveredIndex(null);
+              if (!isDragging) {
+                draggedOverRef.current = [];
+                setSelectedNumbers([]);
+                setCurrentlyDraggedIndices([]);
+              }
+            }}
+            style={{ 
+            display: 'grid',
+            gridTemplateColumns: `repeat(${gridDimensions.cols}, 1fr)`,
+            gridTemplateRows: `repeat(${gridDimensions.rows}, 1fr)`
+          }}>
+            {Array.from({ length: gridDimensions.total }, (_, i) => {
             const isHovered = hoveredIndex === i;
             const isAdjacent = hoveredIndex !== null && getAdjacentIndices(hoveredIndex).includes(i);
             const isDraggedNumber = currentlyDraggedIndices.includes(i);
@@ -202,25 +239,13 @@ export default function Home() {
             return (
               <div
                 key={i}
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
+                className="relative w-full h-full flex items-center justify-center"
               >
                 <div
                   onMouseDown={() => handleMouseDown(i)}
                   onMouseEnter={() => handleMouseEnter(i)}
                   onMouseUp={handleMouseUp}
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    zIndex: 100,
-                    cursor: 'pointer'
-                  }}
+                  className="absolute inset-0 z-[100] cursor-pointer"
                 />
                 <div
                   style={{
@@ -239,30 +264,15 @@ export default function Home() {
               </div>
             );
           })}
+          </div>
         </div>
         {selectedNumbers.length > 0 && (
-          <div style={{
-            width: '400px',
-            height: '100px',
-            border: '2px solid #00ff00',
-            padding: '20px',
-            marginTop: '2rem',
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '15px',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'transparent',
-            position: 'relative'
-          }}>
+          <div className="w-[400px] h-[100px] border-2 border-[#00b5cc] p-5 mt-8 flex flex-wrap gap-[15px] items-center justify-center bg-transparent relative">
             {selectedNumbers.map((number, index) => (
               <div
                 key={index}
+                className="text-[#00b5cc] text-[2rem] font-mono font-semibold"
                 style={{
-                  color: '#00ff00',
-                  fontSize: '2rem',
-                  fontFamily: 'monospace',
-                  fontWeight: '600',
                   animation: `fadeIn 0.3s ease ${index * 0.1}s both`
                 }}
               >

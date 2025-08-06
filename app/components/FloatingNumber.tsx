@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import './FloatingNumber.css';
+import { useState } from 'react';
 
 interface FloatingNumberProps {
   value?: number;
@@ -13,9 +12,9 @@ export default function FloatingNumber({ value }: FloatingNumberProps) {
   const [animationDelay] = useState(() => Math.random() * 2);
 
   return (
-    <div className="floating-container">
+    <div className="relative w-[60px] h-[60px] overflow-hidden inline-block">
       <div 
-        className="floating-number"
+        className="absolute text-2xl font-semibold w-full h-full flex items-center justify-center animate-float tabular-nums pointer-events-none text-[#00b5cc]"
         style={{
           animationDuration: `${animationDuration}s`,
           animationDelay: `${animationDelay}s`
