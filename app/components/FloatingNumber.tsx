@@ -9,7 +9,7 @@ interface FloatingNumberProps {
 export default function FloatingNumber({ value }: FloatingNumberProps) {
   const [number] = useState(() => value !== undefined ? value : Math.floor(Math.random() * 10));
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number>(undefined);
   
   useEffect(() => {
     let time = 0;
