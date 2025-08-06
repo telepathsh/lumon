@@ -43,6 +43,7 @@ export default function Home() {
   const [maxProgress, setMaxProgress] = useState(0);
   const [totalNumbersSelected, setTotalNumbersSelected] = useState(0);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [hasCompletedSelection, setHasCompletedSelection] = useState<boolean>(false);
   const draggedOverRef = useRef<number[]>([]);
   const draggedIndicesRef = useRef<number[]>([]);
 
@@ -65,6 +66,8 @@ export default function Home() {
   const handleMouseDown = (index: number) => {
     setIsDragging(true);
     setIsSuccess(false); // Reset success state when starting new selection
+    setSelectedNumbers([]); // Clear selected numbers to hide the message
+    setHasCompletedSelection(false); // Reset selection completed state
     draggedOverRef.current = [numberValues[index]];
     draggedIndicesRef.current = [index];
     setCurrentlyDraggedIndices([index]);
@@ -148,6 +151,9 @@ export default function Home() {
         console.log("Error occurred:", error);
       }
 
+      // Mark that we've completed a selection
+      setHasCompletedSelection(true);
+
       // Reset states
       setCurrentlyDraggedIndices([]);
       draggedOverRef.current = [];
@@ -191,6 +197,9 @@ export default function Home() {
           // Error is expected for demonstration purposes
           console.error("Error occurred:", error);
         }
+
+        // Mark that we've completed a selection
+        setHasCompletedSelection(true);
 
         // Reset states
         setCurrentlyDraggedIndices([]);
@@ -300,7 +309,7 @@ export default function Home() {
             </div>
           </div>
 
-          {isSuccess ? (
+          {hasCompletedSelection && isSuccess ? (
             <div className="text-[#00b5cc] flex flex-row items-center justify-center gap-4">
               <span className="font-bold text-2xl p-4 border-2 w-fit">
                 MDR-OK
@@ -315,7 +324,7 @@ export default function Home() {
               </span>
               <div className="text-6xl">🧇</div>
             </div>
-          ) : (
+          ) : hasCompletedSelection && !isSuccess ? (
             <>
               <div className="text-[#00b5cc] flex flex-row items-center justify-center gap-4">
                 <span className="font-bold text-2xl p-4 border-2 border-red-800 w-fit">
@@ -333,7 +342,7 @@ export default function Home() {
                     height={35}
                   />
                   <a
-                    href="https://lumon.telepath.sh"
+                    href="https://app.telepath.sh/demo"
                     className="group cursor-pointer bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded-lg flex flex-row gap-3 items-center transition-colors duration-200"
                   >
                     Take Corrective Action
@@ -342,7 +351,7 @@ export default function Home() {
                 </div>
               </div>
             </>
-          )}
+          ) : null}
           <div className="absolute right-4 bottom-14">
             <Popover>
               <PopoverTrigger>
