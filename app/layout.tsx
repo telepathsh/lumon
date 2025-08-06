@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "App",
-  description: "",
+  title: "Lumon",
+  description: "CONFIDENTIAL: Macrodata Refinement Platform",
 };
 
 export default function RootLayout({
