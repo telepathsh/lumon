@@ -18,6 +18,11 @@ import {
   calculateProgress,
   GridDimensions,
 } from "./utils/gridUtils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export default function Home() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -59,6 +64,7 @@ export default function Home() {
 
   const handleMouseDown = (index: number) => {
     setIsDragging(true);
+    setIsSuccess(false); // Reset success state when starting new selection
     draggedOverRef.current = [numberValues[index]];
     draggedIndicesRef.current = [index];
     setCurrentlyDraggedIndices([index]);
@@ -115,9 +121,6 @@ export default function Home() {
       const selectedNumbersCopy = [...draggedOverRef.current];
       const replacedIndices = [...draggedIndicesRef.current];
 
-      // Call generateError with selected numbers
-      generateError(selectedNumbersCopy);
-
       // Set selected numbers for display
       setSelectedNumbers(selectedNumbersCopy);
 
@@ -137,6 +140,14 @@ export default function Home() {
         setNewlyReplacedIndices([]);
       }, 500);
 
+      // Call generateError with selected numbers (after number reset to ensure it happens)
+      try {
+        generateError(selectedNumbersCopy);
+      } catch (error) {
+        // Error is expected for demonstration purposes
+        console.log("Error occurred:", error);
+      }
+
       // Reset states
       setCurrentlyDraggedIndices([]);
       draggedOverRef.current = [];
@@ -153,9 +164,6 @@ export default function Home() {
         const selectedCount = draggedOverRef.current.length;
         const selectedNumbersCopy = [...draggedOverRef.current];
         const replacedIndices = [...draggedIndicesRef.current];
-
-        // Call generateError with selected numbers
-        generateError(selectedNumbersCopy);
 
         // Set selected numbers for display
         setSelectedNumbers(selectedNumbersCopy);
@@ -175,6 +183,14 @@ export default function Home() {
         setTimeout(() => {
           setNewlyReplacedIndices([]);
         }, 500);
+
+        // Call generateError with selected numbers (after number reset to ensure it happens)
+        try {
+          generateError(selectedNumbersCopy);
+        } catch (error) {
+          // Error is expected for demonstration purposes
+          console.error("Error occurred:", error);
+        }
 
         // Reset states
         setCurrentlyDraggedIndices([]);
@@ -294,8 +310,7 @@ export default function Home() {
                   Your contribution has been noted. Your work is satisfactory.
                 </div>
                 <div>
-                  The board could award you with a waffle party with enough
-                  correct refinement.
+                  The board is watching, and may reward exceptional refiners with a waffle party for their hard work.
                 </div>
               </span>
               <div className="text-6xl">🧇</div>
@@ -328,7 +343,73 @@ export default function Home() {
               </div>
             </>
           )}
-          <div className="bg-foreground w-full h-8 text-[#071216] justify-center flex items-center text-sm font-bold font-mono mt-auto">
+          <div className="absolute right-4 bottom-14">
+            <Popover>
+              <PopoverTrigger>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-circle-question-mark-icon lucide-circle-question-mark"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                  <path d="M12 17h.01" />
+                </svg>
+              </PopoverTrigger>
+              <PopoverContent className="bg-[#071216] text-[#00b5cc] p-4 w-auto m-4">
+                Congratulations, you're the newest employee at Lumon Industries!
+                <br />
+                Your task is to refine the data by selecting numbers in the
+                grid.
+                <br />
+                <br />
+                <strong>How to Play:</strong>
+                <br />
+                1. Click and drag to select numbers in the grid.
+                <br />
+                2. The goal is to refine the data by selecting the correct
+                numbers.
+                <br />
+                3. If you select the right numbers, you'll see a success message.
+                <br />
+                4. If you select the wrong numbers, you'll see an error message.
+                <br />
+                <br />
+                <strong>Tips:</strong>
+                <br />
+                - The data is always right, so trust the numbers.
+                <br />
+                - Mistakes are normal. To seek a correction, visit{" "}
+                <a
+                  href="https://lumon.telepath.sh"
+                  className="text-fuchsia-400"
+                >
+                  TELEPATH
+                </a>{" "}
+                to right your path.
+                <br />
+                - Remember, our work is mysterious and important.
+                <br />
+                <br />
+                <strong>Important:</strong>
+                <br />
+                This is a test of your ability to refine data.
+                <br />
+                Your performance will be monitored, and your work is crucial to the success of
+                Lumon Industries.
+                <br />
+                Hail Keir!
+              </PopoverContent>
+            </Popover>
+          </div>
+          <div className="bg-[#00b5cc] w-full h-8 text-[#071216] justify-center flex items-center text-sm font-bold font-mono mt-auto">
             03F7H : 7F903
           </div>
         </main>
