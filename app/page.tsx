@@ -264,6 +264,14 @@ export default function Home() {
                 const isDraggedNumber = currentlyDraggedIndices.includes(i);
                 const isNewlyReplaced = newlyReplacedIndices.includes(i);
 
+                const scale = isDraggedNumber
+                  ? 2.2
+                  : isHovered
+                  ? 2.6
+                  : isAdjacent
+                  ? 2.0
+                  : 1.4;
+
                 return (
                   <div
                     key={i}
@@ -273,19 +281,11 @@ export default function Home() {
                       onMouseDown={() => handleMouseDown(i)}
                       onMouseEnter={() => handleMouseEnter(i)}
                       onMouseUp={handleMouseUp}
-                      className="absolute inset-0 z-[100] cursor-pointer"
+                      className="absolute inset-0 z-[100] cursor-pointer bg-transparent"
+                      style={{ pointerEvents: 'all' }}
                     />
                     <div
                       style={{
-                        transform: isDraggedNumber
-                          ? "scale(2.5)"
-                          : isHovered
-                          ? "scale(3.0)"
-                          : isAdjacent
-                          ? "scale(1.8)"
-                          : "scale(1.44)",
-                        transformOrigin: "center",
-                        transition: "transform 0.6s ease",
                         zIndex: isDraggedNumber
                           ? 15
                           : isHovered
@@ -293,7 +293,6 @@ export default function Home() {
                           : isAdjacent
                           ? 5
                           : 1,
-                        willChange: "transform",
                         pointerEvents: "none",
                         opacity: isDraggedNumber ? 0.8 : 1,
                         animation: isNewlyReplaced
@@ -301,7 +300,7 @@ export default function Home() {
                           : undefined,
                       }}
                     >
-                      <FloatingNumber value={numberValues[i]} />
+                      <FloatingNumber value={numberValues[i]} scale={scale} />
                     </div>
                   </div>
                 );

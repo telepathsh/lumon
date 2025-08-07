@@ -4,9 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 
 interface FloatingNumberProps {
   value?: number;
+  scale?: number;
 }
 
-export default function FloatingNumber({ value }: FloatingNumberProps) {
+export default function FloatingNumber({ value, scale = 1 }: FloatingNumberProps) {
   const [number] = useState(() => value !== undefined ? value : Math.floor(Math.random() * 10));
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const animationRef = useRef<number>(undefined);
@@ -43,8 +44,9 @@ export default function FloatingNumber({ value }: FloatingNumberProps) {
       <div 
         className="absolute text-2xl font-semibold w-full h-full flex items-center justify-center tabular-nums pointer-events-none text-[#00b5cc]"
         style={{
-          transform: `translate(${position.x}px, ${position.y}px)`,
-          transition: 'none'
+          transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+          transition: 'transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transformOrigin: 'center'
         }}
       >
         {number}
