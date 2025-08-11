@@ -5,6 +5,7 @@ import Image from "next/image";
 import FloatingNumber from "./components/FloatingNumber";
 import CRTEffect from "./components/CRTEffect";
 import ArrowIcon from "./components/arrow";
+import { toast } from "sonner";
 import {
   typeError,
   nullReferenceError,
@@ -95,8 +96,28 @@ export default function Home() {
 
     if (randomNum === 5) {
       setIsSuccess(true);
+      toast.success(
+        <div className="flex flex-col gap-2">
+          <div className="font-bold text-green-600">MDR-OK</div>
+          <div>Your contribution has been noted. Your work is satisfactory.</div>
+          <div>The board is watching, and may reward exceptional refiners with a waffle party for their hard work. 🧇</div>
+        </div>
+      );
     } else {
       setIsSuccess(false);
+      toast.error(
+        <div className="flex flex-col gap-2">
+          <div className="font-bold text-red-600">MDR-ERR</div>
+          <div>The data remains unrefined.</div>
+          <div>Remember, the data is always right.</div>
+          <a
+            href="https://app.telepath.sh/demo"
+            className="text-sky-400 hover:text-sky-300 underline mt-2 inline-block"
+          >
+            Take Corrective Action →
+          </a>
+        </div>
+      );
 
       switch (randomNum) {
         case 1:
@@ -308,63 +329,22 @@ export default function Home() {
             </div>
           </div>
 
-          {hasCompletedSelection && isSuccess ? (
-            <div className="text-[#00b5cc] flex flex-row items-center justify-center gap-4">
-              <span className="font-bold text-2xl p-4 border-2 w-fit">
-                MDR-OK
-              </span>
-              <span className="m-4 text-lg">
-                <div>
-                  Your contribution has been noted. Your work is satisfactory.
-                </div>
-                <div>
-                  The board is watching, and may reward exceptional refiners with a waffle party for their hard work.
-                </div>
-              </span>
-              <div className="text-6xl">🧇</div>
-            </div>
-          ) : hasCompletedSelection && !isSuccess ? (
-            <>
-              <div className="text-[#00b5cc] flex flex-row items-center justify-center gap-4">
-                <span className="font-bold text-2xl p-4 border-2 border-red-800 w-fit">
-                  MDR-ERR
-                </span>
-                <span className="m-4 text-lg">
-                  <div>The data remains unrefined.</div>
-                  <div>Remember, the data is always right.</div>
-                </span>
-                <div className="p-4 flex items-center gap-4">
-                  <Image
-                    src="/telepath_logo.svg"
-                    alt="Telepath Logo"
-                    width={180}
-                    height={35}
-                  />
-                  <a
-                    href="https://app.telepath.sh/demo"
-                    className="group cursor-pointer bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded-lg flex flex-row gap-3 items-center transition-colors duration-200"
-                  >
-                    Take Corrective Action
-                    <ArrowIcon />
-                  </a>
-                </div>
-              </div>
-            </>
-          ) : null}
-          <div className="absolute right-4 bottom-14">
+          <div className="bg-[#00b5cc] w-full h-8 text-[#071216] flex items-center justify-between px-4 text-sm font-bold font-mono mt-auto">
+            <div></div>
+            <div>03F7H : 7F903</div>
             <Popover>
               <PopoverTrigger>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
+                  width="20"
+                  height="20"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="lucide lucide-circle-question-mark-icon lucide-circle-question-mark"
+                  className="lucide lucide-circle-question-mark-icon lucide-circle-question-mark hover:opacity-70 cursor-pointer"
                 >
                   <circle cx="12" cy="12" r="10" />
                   <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
@@ -416,9 +396,6 @@ export default function Home() {
                 Hail Keir!
               </PopoverContent>
             </Popover>
-          </div>
-          <div className="bg-[#00b5cc] w-full h-8 text-[#071216] justify-center flex items-center text-sm font-bold font-mono mt-auto">
-            03F7H : 7F903
           </div>
         </main>
       </CRTEffect>
