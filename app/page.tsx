@@ -7,12 +7,6 @@ import CRTEffect from "./components/CRTEffect";
 import ArrowIcon from "./components/arrow";
 import { toast } from "sonner";
 import {
-  typeError,
-  nullReferenceError,
-  indexError,
-  asyncError,
-} from "./errors";
-import {
   calculateGrid,
   getAdjacentIndices,
   generateRandomNumbers,
@@ -91,48 +85,53 @@ export default function Home() {
     }
   };
 
-  const generateError = (selectedNumbers: number[]) => {
-    const randomNum = Math.floor(Math.random() * 5) + 1;
+  const generateError = async (selectedNumbers: number[]) => {
+    try {
+      const response = await fetch('/api/generate-error', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ selectedNumbers }),
+      });
 
-    if (randomNum === 5) {
-      setIsSuccess(true);
-      toast.success(
-        <div className="flex flex-col gap-2">
-          <div className="font-bold text-green-600">MDR-OK</div>
-          <div>Your contribution has been noted. Your work is satisfactory.</div>
-          <div>The board is watching, and may reward exceptional refiners with a waffle party for their hard work. 🧇</div>
-        </div>
-      );
-    } else {
+      const data = await response.json();
+
+      if (data.success) {
+        setIsSuccess(true);
+        toast.success(
+          <div className="flex flex-col gap-2">
+            <div className="font-bold text-green-600">MDR-OK</div>
+            <div>Your contribution has been noted. Your work is satisfactory.</div>
+            <div>The board is watching, and may reward exceptional refiners with a waffle party for their hard work. 🧇</div>
+          </div>
+        );
+      } else {
+        setIsSuccess(false);
+        toast.error(
+          <div className="flex flex-col gap-2">
+            <div className="font-bold text-red-600">MDR-ERR</div>
+            <div>The data remains unrefined.</div>
+            <div>Remember, the data is always right.</div>
+            <a
+              href="https://app.telepath.sh/demo"
+              className="text-sky-400 hover:text-sky-300 underline mt-2 inline-block"
+            >
+              Take Corrective Action →
+            </a>
+          </div>
+        );
+      }
+    } catch (error) {
+      console.error('Failed to call generate-error endpoint:', error);
       setIsSuccess(false);
       toast.error(
         <div className="flex flex-col gap-2">
           <div className="font-bold text-red-600">MDR-ERR</div>
           <div>The data remains unrefined.</div>
           <div>Remember, the data is always right.</div>
-          <a
-            href="https://app.telepath.sh/demo"
-            className="text-sky-400 hover:text-sky-300 underline mt-2 inline-block"
-          >
-            Take Corrective Action →
-          </a>
         </div>
       );
-
-      switch (randomNum) {
-        case 1:
-          typeError();
-          break;
-        case 2:
-          nullReferenceError();
-          break;
-        case 3:
-          indexError();
-          break;
-        case 4:
-          asyncError();
-          break;
-      }
     }
   };
 
@@ -165,12 +164,7 @@ export default function Home() {
       }, 500);
 
       // Call generateError with selected numbers (after number reset to ensure it happens)
-      try {
-        generateError(selectedNumbersCopy);
-      } catch (error) {
-        // Error is expected for demonstration purposes
-        console.log("Error occurred:", error);
-      }
+      generateError(selectedNumbersCopy);
 
       // Mark that we've completed a selection
       setHasCompletedSelection(true);
@@ -212,12 +206,7 @@ export default function Home() {
         }, 500);
 
         // Call generateError with selected numbers (after number reset to ensure it happens)
-        try {
-          generateError(selectedNumbersCopy);
-        } catch (error) {
-          // Error is expected for demonstration purposes
-          console.error("Error occurred:", error);
-        }
+        generateError(selectedNumbersCopy);
 
         // Mark that we've completed a selection
         setHasCompletedSelection(true);
