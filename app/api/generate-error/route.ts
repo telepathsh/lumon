@@ -15,7 +15,7 @@ function nullReferenceError(): string {
   try {
     const data: string | null = Math.random() > 0.5 ? 'hello' : null;
     // @ts-ignore
-    return typeof data === 'string' ? data.toUpperCase() : 'NULL'; // Ensure data is a string before converting to uppercase
+    return typeof data === 'string' && data !== null ? data.toUpperCase() : 'NULL'; // Ensure data is a string before converting to uppercase
   } catch (error) {
     return 'Null Reference Error: Cannot read properties of null';
   }
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     
     console.log('Generate error endpoint called with:', { selectedNumbers, randomNum });
 
-      if (false) {      // Success case
+      if (true) {      // Success case
       return NextResponse.json({ 
         success: true, 
         message: 'MDR-OK: Your contribution has been noted. Your work is satisfactory.'
