@@ -2,29 +2,46 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Server-side error functions (copied from app/errors.ts)
 function typeError(): string {
-  const user = { name: 'John', age: 30 };
-  // @ts-ignore
-  return user.email; // Property 'email' does not exist on type
+  try {
+    const user = { name: 'John', age: 30 };
+    // @ts-ignore
+    return user.email; // Property 'email' does not exist on type
+  } catch (error) {
+    return 'Type Error: Property does not exist';
+  }
 }
 
 function nullReferenceError(): string {
-  const data: string | null = Math.random() > 0.5 ? 'hello' : null;
-  // @ts-ignore
-  return data.toUpperCase(); // Object is possibly 'null'
+  try {
+    const data: string | null = Math.random() > 0.5 ? 'hello' : null;
+    // @ts-ignore
+    return data.toUpperCase(); // Object is possibly 'null'
+  } catch (error) {
+    return 'Null Reference Error: Cannot read properties of null';
+  }
 }
 
-function indexError(): number {
-  const numbers = [1, 2, 3];
-  const index = Math.floor(Math.random() * 10);
-  // @ts-ignore
-  return numbers[index].toString(); // Can return undefined, then calling toString() fails
+function indexError(): string {
+  try {
+    const numbers = [1, 2, 3];
+    const index = Math.floor(Math.random() * 10);
+    const value = numbers[index];
+    // @ts-ignore
+    return value !== undefined ? value.toString() : '0'; // Return '0' if undefined to prevent toString error
+  } catch (error) {
+    return 'Index Error: Cannot read properties of undefined';
+  }
 }
 
 function asyncError(): string {
-  const fetchData = async () => 'async data';
-  const result = fetchData(); // Missing await - returns Promise<string> not string
-  // @ts-ignore
-  return result.toUpperCase(); // Property 'toUpperCase' does not exist on type 'Promise<string>'
+  try {
+    const fetchData = async () => 'async data';
+    const result = fetchData(); // Missing await - returns Promise<string> not string
+    // @ts-ignore
+    return result.toUpperCase(); // Property 'toUpperCase' does not exist on type 'Promise<string>'
+  } catch (error) {
+    return 'Async Error: Promise<string> does not have toUpperCase method';
+  }
 }
 
 export async function POST(request: NextRequest) {
