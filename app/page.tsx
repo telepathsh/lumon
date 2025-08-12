@@ -100,19 +100,17 @@ export default function Home() {
       if (data.success) {
         setIsSuccess(true);
         toast.success(
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 text-[#00b5cc]">
             <div className="font-bold text-green-600">MDR-OK</div>
             <div>Your contribution has been noted. Your work is satisfactory.</div>
-            <div>The board is watching, and may reward exceptional refiners with a waffle party for their hard work. 🧇</div>
           </div>
         );
       } else {
         setIsSuccess(false);
         toast.error(
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 text-[#00b5cc]">
             <div className="font-bold text-red-600">MDR-ERR</div>
             <div>The data remains unrefined.</div>
-            <div>Remember, the data is always right.</div>
             <a
               href="https://app.telepath.sh/demo"
               className="text-sky-400 hover:text-sky-300 underline mt-2 inline-block"
@@ -126,10 +124,9 @@ export default function Home() {
       console.error('Failed to call generate-error endpoint:', error);
       setIsSuccess(false);
       toast.error(
-        <div className="flex flex-col gap-2">
-          <div className="font-bold text-red-600">MDR-ERR</div>
+        <div className="flex flex-col gap-2 text-[#00b5cc]">
+          <div className="font-bold text-red-600 bg-[#00b5cc]">MDR-ERR</div>
           <div>The data remains unrefined.</div>
-          <div>Remember, the data is always right.</div>
         </div>
       );
     }
