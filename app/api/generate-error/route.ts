@@ -5,7 +5,7 @@ function typeError(): string {
   try {
     const user = { name: 'John', age: 30 };
     // @ts-ignore
-    return user.email; // Property 'email' does not exist on type
+    return user.email || ''; // Property 'email' does not exist on type, return empty string if undefined
   } catch (error) {
     return 'Type Error: Property does not exist';
   }
