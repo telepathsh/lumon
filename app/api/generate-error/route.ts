@@ -27,7 +27,7 @@ function indexError(): string {
     const index = Math.floor(Math.random() * 10);
     const value = numbers[index];
     // @ts-ignore
-    return (value !== undefined && value !== null) ? String(value) : 'UNDEFINED_VALUE'; // Return '0' if undefined/null to prevent toString error
+    return value?.toString() || 'UNDEFINED_VALUE'; // Use optional chaining and provide a fallback string // Return '0' if undefined/null to prevent toString error
   } catch (error) {
     return 'Index Error: Cannot read properties of undefined';
   }
