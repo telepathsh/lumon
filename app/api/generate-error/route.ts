@@ -27,20 +27,15 @@ function indexError(): string {
     const index = Math.floor(Math.random() * 10);
     const value = numbers[index];
     // @ts-ignore
-    return (value !== undefined && value !== null) ? String(value) : '0'; // Return '0' if undefined/null to prevent toString error
+    return (value !== undefined && value !== null) ? String(value) : 'UNDEFINED_VALUE'; // Return '0' if undefined/null to prevent toString error
   } catch (error) {
     return 'Index Error: Cannot read properties of undefined';
   }
 }
 
 async function asyncError(): Promise<string> {
-  try {
-    const fetchData = async () => Promise.resolve('async data');
-    const result = await fetchData();
-    return typeof result === 'string' ? result.toUpperCase() : 'async data';
-  } catch (error) {
-    return 'Async Error: Promise<string> does not have toUpperCase method';
-  }
+  // Simulate an actual async error
+  throw new Error('Simulated async error');
 }
 
 export async function POST(request: NextRequest) {
