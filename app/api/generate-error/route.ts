@@ -2,42 +2,60 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Server-side error functions (copied from app/errors.ts)
 function typeError(): string {
-  const user = { name: 'John', age: 30 };
-  // @ts-ignore
-  return user.email; // Property 'email' does not exist on type
+  try {
+    const user = { name: 'John', age: 30 };
+    // @ts-ignore
+    // @ts-ignore
+    return user.address.street; // This will intentionally cause a TypeError
+  } catch (error) {
+    return 'Type Error: Property does not exist';
+  }
 }
 
 function nullReferenceError(): string {
-  const data: string | null = Math.random() > 0.5 ? 'hello' : null;
-  // @ts-ignore
-  return data.toUpperCase(); // Object is possibly 'null'
+  try {
+    const data: string | null = Math.random() > 0.5 ? 'hello' : null;
+    // @ts-ignore
+    return data !== null ? String(data).toUpperCase() : 'NULL'; // Ensure data is a string before converting to uppercase
+  } catch (error) {
+    return 'Null Reference Error: Cannot read properties of null';
+  }
 }
 
-function indexError(): number {
-  const numbers = [1, 2, 3];
-  const index = Math.floor(Math.random() * 10);
-  // @ts-ignore
-  return numbers[index].toString(); // Can return undefined, then calling toString() fails
+function indexError(): string {
+  try {
+    const numbers = [1, 2, 3];
+    const index = Math.floor(Math.random() * 10);
+    const value = numbers[index];
+    // @ts-ignore
+    return value !== undefined ? value.toString() : 'UNDEFINED_VALUE'; // Use optional chaining and provide a fallback string // Return '0' if undefined/null to prevent toString error
+  } catch (error) {
+    return 'Index Error: Cannot read properties of undefined';
+  }
 }
 
-function asyncError(): string {
-  const fetchData = async () => 'async data';
-  const result = fetchData(); // Missing await - returns Promise<string> not string
-  // @ts-ignore
-  return result.toUpperCase(); // Property 'toUpperCase' does not exist on type 'Promise<string>'
+async function asyncError(): Promise<string> {
+  // Simulate an actual async error
+  return Promise.reject(new Error('Simulated async error'));
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { selectedNumbers } = body;
+    let body = {};
+    try {
+      body = await request.json();
+    } catch (jsonError) {
+      console.warn('Invalid JSON in request body');
+      body = {};
+    }
+    
+    const { selectedNumbers } = body as { selectedNumbers?: number[] };
     
     const randomNum = Math.floor(Math.random() * 5) + 1;
     
     console.log('Generate error endpoint called with:', { selectedNumbers, randomNum });
 
-    if (randomNum === 5) {
-      // Success case
+      if (selectedNumbers && selectedNumbers.includes(randomNum)) {      // Success case
       return NextResponse.json({ 
         success: true, 
         message: 'MDR-OK: Your contribution has been noted. Your work is satisfactory.'
@@ -56,7 +74,14 @@ export async function POST(request: NextRequest) {
           errorResult = indexError();
           break;
         case 4:
-          errorResult = asyncError();
+          try {
+            errorResult = await asyncError();
+          } catch (e: any) {
+            errorResult = `Async Error: ${e.message}`;
+          }
+          break;
+        default:
+          errorResult = 'Unknown error occurred';
           break;
       }
       
@@ -74,7 +99,7 @@ export async function POST(request: NextRequest) {
       { 
         success: false, 
         message: 'MDR-ERR: The data remains unrefined.',
-        serverError: true
+        serverError: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }
     );
