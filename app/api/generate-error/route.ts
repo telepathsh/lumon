@@ -33,10 +33,10 @@ function indexError(): string {
   }
 }
 
-async function asyncError(): string {
+async function asyncError(): Promise<string> {
   try {
-    const fetchData = async () => 'async data';
-    const result = await fetchData(); // Properly await the promise
+    const fetchData = async () => Promise.resolve('async data');
+    const result = await fetchData();
     return typeof result === 'string' ? result.toUpperCase() : 'async data';
   } catch (error) {
     return 'Async Error: Promise<string> does not have toUpperCase method';
