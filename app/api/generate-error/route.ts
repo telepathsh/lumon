@@ -15,7 +15,7 @@ function nullReferenceError(): string {
   try {
     const data: string | null = Math.random() > 0.5 ? 'hello' : null;
     // @ts-ignore
-    return data ? data.toUpperCase() : 'NULL'; // Ensure data is a string before converting to uppercase
+    return data !== null ? String(data).toUpperCase() : 'NULL'; // Ensure data is a string before converting to uppercase
   } catch (error) {
     return 'Null Reference Error: Cannot read properties of null';
   }
