@@ -15,7 +15,7 @@ function nullReferenceError(): string {
   try {
     const data: string | null = Math.random() > 0.5 ? 'hello' : null;
     // @ts-ignore
-    return typeof data === 'string' ? data.toUpperCase() : 'NULL'; // Handle null case properly
+    return data !== null ? data.toUpperCase() : 'NULL'; // Handle null case properly
   } catch (error) {
     return 'Null Reference Error: Cannot read properties of null';
   }
@@ -73,7 +73,11 @@ export async function POST(request: NextRequest) {
           errorResult = indexError();
           break;
         case 4:
-          errorResult = await asyncError();
+          try {
+            errorResult = await asyncError();
+          } catch (e: any) {
+            errorResult = `Async Error: ${e.message}`;
+          }
           break;
         default:
           errorResult = 'Unknown error occurred';
