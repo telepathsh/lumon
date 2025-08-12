@@ -33,12 +33,11 @@ function indexError(): string {
   }
 }
 
-function asyncError(): string {
+async function asyncError(): string {
   try {
     const fetchData = async () => 'async data';
-    const result = fetchData(); // Missing await - returns Promise<string> not string
-    // @ts-ignore
-    return typeof result === 'string' ? result.toUpperCase() : 'async data'; // Prevent calling toUpperCase on Promise
+    const result = await fetchData(); // Properly await the promise
+    return typeof result === 'string' ? result.toUpperCase() : 'async data';
   } catch (error) {
     return 'Async Error: Promise<string> does not have toUpperCase method';
   }
@@ -73,7 +72,7 @@ export async function POST(request: NextRequest) {
           errorResult = indexError();
           break;
         case 4:
-          errorResult = asyncError();
+          errorResult = await asyncError();
           break;
         default:
           errorResult = 'Unknown error occurred';
