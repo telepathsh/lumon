@@ -15,7 +15,7 @@ function nullReferenceError(): string {
   try {
     const data: string | null = Math.random() > 0.5 ? 'hello' : null;
     // @ts-ignore
-    return data.toUpperCase(); // Object is possibly 'null'
+    return data ? data.toUpperCase() : 'NULL'; // Handle null case properly
   } catch (error) {
     return 'Null Reference Error: Cannot read properties of null';
   }
@@ -45,8 +45,15 @@ async function asyncError(): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { selectedNumbers } = body;
+    let body = {};
+    try {
+      body = await request.json();
+    } catch (jsonError) {
+      console.warn('Invalid JSON in request body');
+      body = {};
+    }
+    
+    const { selectedNumbers } = body as { selectedNumbers?: number[] };
     
     const randomNum = Math.floor(Math.random() * 5) + 1;
     
