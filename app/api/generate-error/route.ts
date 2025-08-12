@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     // This error will be logged in Vercel
-    console.error('Server error in generate-error endpoint:', error);
+    console.warn('Simulated server error in generate-error endpoint:', error);
     return NextResponse.json(
       { 
         success: false, 
