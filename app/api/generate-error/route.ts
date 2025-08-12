@@ -27,7 +27,7 @@ function indexError(): string {
     const index = Math.floor(Math.random() * 10);
     const value = numbers[index];
     // @ts-ignore
-    return (value !== undefined && value !== null) ? value.toString() : '0'; // Return '0' if undefined/null to prevent toString error
+    return (value !== undefined && value !== null) ? String(value) : '0'; // Return '0' if undefined/null to prevent toString error
   } catch (error) {
     return 'Index Error: Cannot read properties of undefined';
   }
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     
     console.log('Generate error endpoint called with:', { selectedNumbers, randomNum });
 
-    if (randomNum === 5) {
+    if (true) {
       // Success case
       return NextResponse.json({ 
         success: true, 
