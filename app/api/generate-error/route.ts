@@ -15,7 +15,7 @@ function nullReferenceError(): string {
   try {
     const data: string | null = Math.random() > 0.5 ? 'hello' : null;
     // @ts-ignore
-    return data !== null ? String(data).toUpperCase() : 'NULL'; // Handle null case properly
+    return typeof data === 'string' ? data.toUpperCase() : 'NULL'; // Handle null case properly
   } catch (error) {
     return 'Null Reference Error: Cannot read properties of null';
   }
@@ -35,7 +35,7 @@ function indexError(): string {
 
 async function asyncError(): Promise<string> {
   // Simulate an actual async error
-  return 'Simulated async error';
+  return Promise.reject(new Error('Simulated async error'));
 }
 
 export async function POST(request: NextRequest) {
