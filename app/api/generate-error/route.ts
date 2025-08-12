@@ -27,7 +27,7 @@ function indexError(): string {
     const index = Math.floor(Math.random() * 10);
     const value = numbers[index];
     // @ts-ignore
-    return value !== undefined ? value.toString() : '0'; // Return '0' if undefined to prevent toString error
+    return (value !== undefined && value !== null) ? value.toString() : '0'; // Return '0' if undefined/null to prevent toString error
   } catch (error) {
     return 'Index Error: Cannot read properties of undefined';
   }
@@ -38,7 +38,7 @@ function asyncError(): string {
     const fetchData = async () => 'async data';
     const result = fetchData(); // Missing await - returns Promise<string> not string
     // @ts-ignore
-    return result.toUpperCase(); // Property 'toUpperCase' does not exist on type 'Promise<string>'
+    return typeof result === 'string' ? result.toUpperCase() : 'async data'; // Prevent calling toUpperCase on Promise
   } catch (error) {
     return 'Async Error: Promise<string> does not have toUpperCase method';
   }
@@ -74,6 +74,9 @@ export async function POST(request: NextRequest) {
           break;
         case 4:
           errorResult = asyncError();
+          break;
+        default:
+          errorResult = 'Unknown error occurred';
           break;
       }
       
