@@ -5,7 +5,8 @@ function typeError(): string {
   try {
     const user = { name: 'John', age: 30 };
     // @ts-ignore
-    return user.email || ''; // Property 'email' does not exist on type, return empty string if undefined
+    // @ts-ignore
+    return user.address.street; // This will intentionally cause a TypeError
   } catch (error) {
     return 'Type Error: Property does not exist';
   }
@@ -15,7 +16,7 @@ function nullReferenceError(): string {
   try {
     const data: string | null = Math.random() > 0.5 ? 'hello' : null;
     // @ts-ignore
-    return data !== null ? String(data).toUpperCase() : 'NULL'; // Ensure data is a string before converting to uppercase
+    return data !== null ? data.toUpperCase() : 'NULL'; // Ensure data is a string before converting to uppercase
   } catch (error) {
     return 'Null Reference Error: Cannot read properties of null';
   }
@@ -27,7 +28,7 @@ function indexError(): string {
     const index = Math.floor(Math.random() * 10);
     const value = numbers[index];
     // @ts-ignore
-    return value?.toString() || 'UNDEFINED_VALUE'; // Use optional chaining and provide a fallback string // Return '0' if undefined/null to prevent toString error
+    return value !== undefined ? value.toString() : 'UNDEFINED_VALUE'; // Use optional chaining and provide a fallback string // Return '0' if undefined/null to prevent toString error
   } catch (error) {
     return 'Index Error: Cannot read properties of undefined';
   }
@@ -98,7 +99,7 @@ export async function POST(request: NextRequest) {
       { 
         success: false, 
         message: 'MDR-ERR: The data remains unrefined.',
-        serverError: true
+        serverError: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }
     );
