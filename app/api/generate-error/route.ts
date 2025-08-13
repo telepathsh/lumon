@@ -15,7 +15,7 @@ function nullReferenceError(): string {
 
 function indexError(): number {
   const numbers = [1, 2, 3];
-  const index = Math.floor(Math.random() * 10);
+  const index = Math.floor(Math.random() * numbers.length);
   // @ts-ignore
   return numbers[index].toString(); // Can return undefined, then calling toString() fails
 }
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
         success: false, 
         message: 'MDR-ERR: The data remains unrefined.',
         errorType: randomNum,
-        result: errorResult
+
       });
     }
   } catch (error) {
