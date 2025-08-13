@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
         message: 'MDR-ERR: The data remains unrefined.',
         serverError: true
       },
-      { status: 500 }
+      { status: 200 }
     );
   }
 }
