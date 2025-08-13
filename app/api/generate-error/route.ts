@@ -22,9 +22,9 @@ function indexError(): number {
 
 function asyncError(): string {
   const fetchData = async () => 'async data';
-  const result = fetchData(); // Missing await - returns Promise<string> not string
+  const result = await fetchData();
   // @ts-ignore
-  return result.toUpperCase(); // Property 'toUpperCase' does not exist on type 'Promise<string>'
+  throw new Error('Simulated async error');
 }
 
 export async function POST(request: NextRequest) {
