@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
         success: false, 
         message: 'MDR-ERR: The data remains unrefined.',
         errorType: randomNum,
-        result: errorResult
+
       });
     }
   } catch (error) {
