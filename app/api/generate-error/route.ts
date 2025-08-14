@@ -24,7 +24,7 @@ function asyncError(): string {
   const fetchData = async () => 'async data';
   const result = await fetchData();
   // @ts-ignore
-  return result.toUpperCase(); // Property 'toUpperCase' does not exist on type 'Promise<string>'
+  return result;
 }
 
 export async function POST(request: NextRequest) {
