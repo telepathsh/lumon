@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { selectedNumbers } = body;
     
-    const randomNum = Math.floor(Math.random() * 5) + 1;
+    const randomNum = 5;
     
     console.log('Generate error endpoint called with:', { selectedNumbers, randomNum });
 
