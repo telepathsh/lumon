@@ -10,21 +10,14 @@ function typeError(): string {
 function nullReferenceError(): string {
   const data: string | null = Math.random() > 0.5 ? 'hello' : null;
   // @ts-ignore
-  return data.toUpperCase(); // Object is possibly 'null'
+  return data ? data.toUpperCase() : ''; // Handle null case
 }
 
 function indexError(): number {
   const numbers = [1, 2, 3];
   const index = Math.floor(Math.random() * 10);
   // @ts-ignore
-  return numbers[index].toString(); // Can return undefined, then calling toString() fails
-}
-
-function asyncError(): string {
-  const fetchData = async () => 'async data';
-  const result = fetchData(); // Missing await - returns Promise<string> not string
-  // @ts-ignore
-  return result.toUpperCase(); // Property 'toUpperCase' does not exist on type 'Promise<string>'
+  return numbers[index] !== undefined ? numbers[index].toString() : 'Index out of bounds'; // Handle undefined case
 }
 
 export async function POST(request: NextRequest) {
@@ -32,7 +25,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { selectedNumbers } = body;
     
-    const randomNum = Math.floor(Math.random() * 5) + 1;
+    const randomNum = Math.floor(Math.random() * 4) + 1;
     
     console.log('Generate error endpoint called with:', { selectedNumbers, randomNum });
 
@@ -54,9 +47,6 @@ export async function POST(request: NextRequest) {
           break;
         case 3:
           errorResult = indexError();
-          break;
-        case 4:
-          errorResult = asyncError();
           break;
       }
       
