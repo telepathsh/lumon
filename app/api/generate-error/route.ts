@@ -22,7 +22,7 @@ function indexError(): number {
 
 function asyncError(): string {
   const fetchData = async () => 'async data';
-  const result = fetchData(); // Missing await - returns Promise<string> not string
+  const result = await fetchData(); // Missing await - returns Promise<string> not string
   // @ts-ignore
   return result.toUpperCase(); // Property 'toUpperCase' does not exist on type 'Promise<string>'
 }
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
         success: false, 
         message: 'MDR-ERR: The data remains unrefined.',
         errorType: randomNum,
-        result: errorResult
+        result: String(errorResult)
       });
     }
   } catch (error) {
